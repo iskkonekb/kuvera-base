@@ -1,0 +1,212 @@
+﻿@{ Layout = "~/Areas/SiteAdmin/Views/Shared/_LayoutManage.cshtml";}
+@model kuvera108.Areas.SiteAdmin.Models.Org
+@{
+    ViewBag.Title = "Общества";
+}
+@Styles.Render("~/bundles/datatables/css")
+@using kuvera108.Data
+
+<div class="col-md-12">
+    <p class="well lead">
+        @Html.ActionLink("Управление учетной записью", "Index", new { area = "SiteAdmin", controller = "Manage" }, null) > Общества
+    </p>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary list-panel" id="list-panel">
+            <div class="panel-heading list-panel-heading">
+                <button type="button" class="btn btn-default btn-md" data-toggle="modal" data-target="#SearchOrgModal" id="advancedsearch-button">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Поиск
+                </button>
+                <button type="button" class="btn btn-default btn-md" data-toggle="modal" data-url="@Url.Action("Create","Orgs")" id="btnCreateOrg">
+                    <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Добавить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createOrgModal" tabindex="-1" role="dialog" aria-labelledby="CreateOrgModal" aria-hidden="true" data-backdrop="static">
+    <div id="createOrgContainer">
+    </div>
+</div>
+<div class="modal fade" id="editOrgModal" tabindex="-1" role="dialog" aria-labelledby="EditOrgModal" aria-hidden="true" data-backdrop="static">
+    <div id="editOrgContainer">
+    </div>
+</div>
+<div class="modal fade" id="detailsOrgModal" tabindex="-1" role="dialog" aria-labelledby="DetailsOrgModal" aria-hidden="true" data-backdrop="static">
+    <div id="detailsOrgContainer">
+    </div>
+</div>
+<div class="modal fade" id="deleteOrgModal" tabindex="-1" role="dialog" aria-labelledby="DeleteOrgModal" aria-hidden="true" data-backdrop="static">
+    <div id="deleteOrgContainer">
+    </div>
+</div>
+@Html.Action("AdvancedSearch")
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/datatables")
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/datetime-moment.js"></script>
+
+    <script type="text/javascript">
+        var OrgListVM;
+        $(function () {
+            OrgListVM = {
+                dt: null,
+                init: function () {
+                    $.fn.dataTable.moment('ru-RU');
+                    dt = $('#OrgsTable').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        select: true,
+                        "language": { "url": '@Url.Content("~/Content/dataTables.russian.lang.json", true)' },
+                        "ajax": {
+                            "url":
+                            "@Url.Action("Get","Orgs", new { area = "SiteAdmin" })",
+                            "data": function (data) {
+                                data.Name = $("#Org_Search_Name").val();
+                            }
+                        },
+                        "columns": [
+                            {
+                                "title": "Название",
+                                "data": "Name",
+                                "searchable": true,
+                                "render": function (data, type, row, meta) {
+                                    if (data == null) {
+                                        return data;
+                                    }
+                                    else {
+                                        return type === 'display' && data.length > 90 ?
+                                            '<span title="' + data + '">' + data.substr(0, 88) + '...</span>' :
+                                            data;
+                                    }
+                                }
+                            },
+                            {
+                                "title": "Описание",
+                                "data": "Descr",
+                                "searchable": false,
+                                "render": function (data, type, row, meta) {
+                                    if (data == null) {
+                                        return data;
+                                    }
+                                    else {
+                                        return type === 'display' && data.length > 90 ?
+                                            '<span title="' + data + '">' + data.substr(0, 88) + '...</span>' :
+                                            data;
+                                    }
+                                }
+                            },
+                            {
+                                "title": "Действия",
+                                "data": "Id",
+                                "searchable": false,
+                                "sortable": false,
+                                "render": function (data, type, full, meta) {
+                                    return '<a href="@Url.Action("Edit","Orgs")?id=' + data + '" class="editOrgs">Редактировать</a> | <a href="@Url.Action("Details", "Orgs")?id=' + data + '" class="detailsOrgs">Информация</a> | <a href="@Url.Action("Delete","Orgs")?id=' + data + '" class="deleteOrgs">Удалить</a>';
+                                }
+                            }
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                        "order": [[0, "desc"]]
+                    });
+                },
+                refresh: function () {
+                    dt.ajax.reload();
+                }
+            }
+            // Advanced Search Modal Search button click handler 
+            $('#btnPerformOrgsSearch').on("click", OrgListVM.refresh);
+            // initialize the datatables
+            OrgListVM.init();
+            $("#btnCreateOrg").on("click", function () {
+                var url = $(this).data("url");
+                $.get(url, function (data) {
+                    $('#createOrgContainer').html(data);
+                    $('#createOrgModal').modal("show");
+                    $("#createOrgModal").draggable({
+                        handle: ".modal-header"
+                    });
+                });
+            });
+            $('#OrgsTable').on("click", ".editOrgs", function (event) {
+                event.preventDefault();
+                var url = $(this).attr("href");
+                $.get(url, function (data) {
+                    $('#editOrgContainer').html(data);
+                    $('#editOrgModal').modal('show');
+                    $("#editOrgModal").draggable({
+                        handle: ".modal-header"
+                    });
+                });
+            });
+            $('#OrgsTable').on("click", ".detailsOrgs", function (event) {
+                event.preventDefault();
+                var url = $(this).attr("href");
+                $.get(url, function (data) {
+                    $('#detailsOrgContainer').html(data);
+                    $('#detailsOrgModal').modal('show');
+                    $("#detailsOrgModal").draggable({
+                        handle: ".modal-header"
+                    });
+                });
+            });
+            $('#OrgsTable').on("click", ".deleteOrgs", function (event) {
+                event.preventDefault();
+                var url = $(this).attr("href");
+                $.get(url, function (data) {
+                    $('#deleteOrgContainer').html(data);
+                    $('#deleteOrgModal').modal('show');
+                    $("#deleteOrgModal").draggable({
+                        handle: ".modal-header"
+                    });
+                });
+            });
+        });
+    /**** Create Org Ajax Form CallBack ********/
+    function CreateOrgSuccess(data) {
+        if (data != "success") {
+            $('#createOrgContainer').html(data);
+            return;
+        }
+        $('#createOrgModal').modal('hide');
+        $('#createOrgContainer').html("");
+        OrgListVM.refresh();
+    }
+    /**** Edit Org Ajax Form CallBack ********/
+        function UpdateOrgSuccess(data) {
+        if (data != "success") {
+            $('#editOrgContainer').html(data);
+            return;
+        }
+        $('#editOrgModal').modal('hide');
+        $('#editOrgContainer').html("");
+        OrgListVM.refresh();
+    }
+    /**** Delet Org Ajax Form CallBack ********/
+    function DeleteOrgSuccess(data) {
+        if (data != "success") {
+            $('#deleteOrgContainer').html(data);
+            return;
+        }
+        $('#deleteOrgModal').modal('hide');
+        $('#deleteOrgContainer').html("");
+        OrgListVM.refresh();
+    }
+</script>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default list-panel" id="list-panel">
+            <div class="panel-heading list-panel-heading">
+                <h1 class="panel-title list-panel-title">Общества</h1>
+            </div>
+            <div class="panel-body">
+                <table id="OrgsTable" class="table table-striped table-bordered"
+                       style="width:100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+ 

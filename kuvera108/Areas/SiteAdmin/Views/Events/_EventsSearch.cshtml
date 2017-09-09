@@ -1,0 +1,71 @@
+﻿@model kuvera108.Areas.SiteAdmin.Models.EventsSearchBox
+@{
+    Layout = null;
+}
+
+<div class="modal fade" id="EventsSearchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Поиск</h4>
+            </div>
+            @using (Html.BeginForm("Get", "Events", FormMethod.Post, new { id = "frmAventsSearch", @class = "form-horizontal", role = "form" }))
+            {
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <hr />
+                        <div class="form-group">
+                            @Html.LabelFor(x => x.FromDate, htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="control-group error">
+                                @Html.ValidationMessageFor(x => x.FromDate)
+                            </div>
+                            <div class='input-group'>
+                                @Html.TextBoxFor(x => x.FromDate, new { @class = "form-control datepicker", id = "dtp_FromDate", placeholder = "Введите дату-время..." })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(x => x.ToDate, htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="control-group error">
+                                @Html.ValidationMessageFor(x => x.ToDate)
+                            </div>
+                            <div class='input-group'>
+                                @Html.TextBoxFor(x => x.ToDate, new { @class = "form-control datepicker", id = "dtp_ToDate", placeholder = "Введите дату-время..." })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnPerformEventsearch" type="button" class="btn btn-default btn-success" data-dismiss="modal">Поиск</button>
+                    <button id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var initDatePicker = function () {
+        moment.locale("ru-RU");
+        $('#dtp_FromDate').datetimepicker({ toolbarPlacement: 'top', format: 'DD/MM/YYYY HH:mm:ss', locale: moment(), sideBySide: false, showClear: true, showClose: true, showTodayButton: true});
+        $('#dtp_ToDate').datetimepicker({ toolbarPlacement: 'top', format: 'DD/MM/YYYY HH:mm:ss', locale: moment(), sideBySide: false, showClear: true, showClose: true, showTodayButton: true });
+        $.validator.addMethod(
+            'date',
+            function (value, element, params) {
+                if (this.optional(element)) {
+                    return true;
+                };
+                var result = false;
+                try {
+                    var date = moment(value);
+                    result = moment(value, "DD/MM/YYYY HH:mm:ss", true).isValid();
+                } catch (err) {
+                    result = false;
+                }
+                return result;
+            },
+            ''
+        );
+    };
+    window.onload = initDatePicker;
+</script>

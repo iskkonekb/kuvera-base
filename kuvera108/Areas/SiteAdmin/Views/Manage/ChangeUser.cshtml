@@ -1,0 +1,62 @@
+﻿@{ Layout = "~/Areas/SiteAdmin/Views/Shared/_LayoutManage.cshtml";}
+@model kuvera108.Areas.SiteAdmin.Models.ChangeUserViewModel
+@using Microsoft.Owin.Security
+@{
+    ViewBag.Title = "Изменение моих реквизитов";
+}
+<div class="row">
+    <div class="col-md-12 ">
+        <p class="well lead">@Html.ActionLink("Управление учетной записью", "Index", new { area = "SiteAdmin", controller = "Manage" }, null) > @ViewBag.Title</p>
+    </div>
+</div>
+<div id="Register-overlay" class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 id="myModalLabel">@ViewBag.Title</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-11">
+                    <div class="well">
+                        @{
+                            using (Html.BeginForm("ChangeUser", "Manage", FormMethod.Post, new { role = "form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
+                                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                                            <span class="help-block"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(m => m.Name, new { @class = "control-label" })
+                                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="row">
+                                        <h5>@Html.ValidationSummary(true, "", new { @class = "text-danger" })</h5>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="modal-group">
+                                                <input type="submit" value="Сохранить" class="btn btn-success" />
+                                                <button id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal" onclick="location.href='@ViewBag.ReturnUrl'">Отмена</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

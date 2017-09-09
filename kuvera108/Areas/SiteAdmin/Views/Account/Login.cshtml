@@ -1,0 +1,82 @@
+﻿@{ Layout = "~/Areas/SiteAdmin/Views/Shared/_Empty.cshtml";}
+@using kuvera108.Areas.SiteAdmin.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "Выполнить вход";
+}
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css" rel="stylesheet">
+<div id="login-overlay" class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Вход</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="well">
+                        <section id="loginForm">
+                            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
+                                                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                                            <span class="help-block"></span>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+                                                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                            <span class="help-block"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                        <h5>@Html.ValidationSummary(true, "", new { @class = "text-danger" })</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <div class="col-md-offset-1 col-md-10">
+                                            <div class="checkbox">
+                                                @Html.CheckBoxFor(m => m.RememberMe)
+                                                @Html.LabelFor(m => m.RememberMe)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                                <input type="submit" value="Вход" class="btn btn-success btn-block" />
+                                            </div>
+                                        </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                                <p>
+                                                    @Html.ActionLink("Регистрация", "Register")
+                                                </p>
+                                                <p>
+                                                    @Html.ActionLink("Забыли пароль?", "ForgotPassword")
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                            }
+                        </section>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <section id="socialLoginForm">
+                        @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

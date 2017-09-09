@@ -1,0 +1,133 @@
+﻿@{
+    ViewBag.Title = "Управление сайтом > События";
+}
+@Styles.Render("~/bundles/datatables/css")
+@model kuvera108.Areas.SiteAdmin.Models.EventsModels
+@using kuvera108.Data
+
+<div class="col-md-12">
+    <p class="well lead">
+        @Html.ActionLink("Управление сайтом", "Index", new { area = "SiteAdmin", controller = "Home" }, null ) > События
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary list-panel" id="list-panel">
+            <div class="panel-heading list-panel-heading">
+                <button type="button" class="btn btn-default btn-md" data-toggle="modal" data-target="#EventsSearchModal" id="search-button">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Поиск
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.Action("EventsSearch")
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/datatables")
+    <script src="~/Scripts/datetime-moment.js"></script>
+    <script type="text/javascript">
+        var logListVM;
+        $(function () {
+            logListVM = {
+                dt: null,
+                init: function () {
+                    $.fn.dataTable.moment('ru-RU');
+                    dt = $('#logs-table').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        select: {
+                            style: 'multi'
+                        },
+                        headers: {
+                            3: { // <-- replace 6 with the zero-based index of your column
+                                sorter: 'DD/MM/YYYY HH:mm:ss'
+                            }
+                        },
+                        "language": { "url": '@Url.Content("~/Content/dataTables.russian.lang.json", true)' },
+                        "ajax": {
+                            "url":
+                            "@Url.Action("Get","Events")",
+                            "data": function (data) {
+                                data.FromDate = $("#dtp_FromDate").val();
+                                data.ToDate = $("#dtp_ToDate").val();
+                            }
+                        },
+                        "columns": [
+                            {
+                                "title": "Логин",
+                                "data": "Login",
+                                "searchable": true
+                            },
+                            {
+                                "title": "Ip адрес",
+                                "data": "Ip",
+                                "searchable": true
+                            },
+                            {
+                                "title": "URL адрес",
+                                "data": "Url",
+                                "searchable": true,
+                                "render": function (data, type, row, meta) {
+                                    if (data == null) {
+                                        return data;
+                                    }
+                                    else {
+                                        return type === 'display' && data.length > 90 ?
+                                            '<span title="' + data + '">' + data.substr(0, 88) + '...</span>' :
+                                            data;
+                                    }
+                                }
+                            },
+                            {
+                                "title": "Время",
+                                "data": "Dt",
+                                "render": function (data) { return moment(data).format("DD/MM/YYYY HH:mm:ss"); },
+                                "searchable": true
+                            },
+                            {
+                                "title": "Описание события",
+                                "data": "Desc",
+                                "render": function (data, type, row, meta) {
+                                    return type === 'display' && data.length > 90 ?
+                                        '<span title="' + data + '">' + data.substr(0, 88) + '...</span>' :
+                                        data;
+                                }
+                           },
+                            {
+                                "title": "Тип события",
+                                "data": "Typ"
+                            }
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                        "order": [[3, "desc"]]
+                    });
+                },
+                refresh: function () {
+                    dt.ajax.reload();
+                }
+            }
+
+            // Advanced Search Modal Search button click handler 
+            $('#btnPerformEventsearch').on("click", logListVM.refresh);
+
+            // initialize the datatables
+            logListVM.init();
+        });
+
+    </script>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default list-panel" id="list-panel">
+            <div class="panel-heading list-panel-heading">
+                <h1 class="panel-title list-panel-title">События</h1>
+            </div>
+            <div class="panel-body">
+                <table id="logs-table" class="table table-striped table-bordered"
+                       style="width:100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>

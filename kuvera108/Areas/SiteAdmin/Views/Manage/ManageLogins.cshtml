@@ -1,0 +1,138 @@
+﻿@{ Layout = "~/Areas/SiteAdmin/Views/Shared/_LayoutManage.cshtml";}
+@model kuvera108.Areas.SiteAdmin.Models.ManageLoginsViewModel
+@using Microsoft.Owin.Security
+@{
+    ViewBag.Title = "Управление внешними именами входа";
+}
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css" rel="stylesheet">
+
+<div class="row">
+    <div class="col-md-12 ">
+        <p class="well lead">@Html.ActionLink("Управление учетной записью", "Index", new { area = "SiteAdmin", controller = "Manage" }, null) > @ViewBag.Title</p>
+    </div>
+</div>
+
+<div id="Register-overlay" class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 id="myModalLabel">@ViewBag.Title</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-11">
+                    <div class="well">
+                        <p class="text-success">@ViewBag.StatusMessage</p>
+                        @{
+                            var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+                            if (loginProviders.Count() == 0)
+                            {
+                                <div>
+                                    <p>
+                                        There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=313242">this article</a>
+                                        for details on setting up this ASP.NET application to support logging in via external services.
+                                    </p>
+                                </div>
+                            }
+                            else
+                            {
+                                if (Model.CurrentLogins.Count > 0)
+                                {
+                                    <h4>Зарегистрированные имена входа</h4>
+                                    <table class="table">
+                                        <tbody>
+                                            @foreach (var account in Model.CurrentLogins)
+                                                {
+                                                <tr>
+                                                    <td>
+                                                        @switch (@account.LoginProvider)
+                                                        {
+                                                            case "Google":
+                                                                <button class="btn btn-lg btn-primary btn-block">
+                                                                    <i class="fa fa-google-plus"></i>
+                                                                    <span class="">@account.LoginProvider</span>
+                                                                </button>
+                                                                break;
+                                                            case "Vkontakte":
+                                                                <button class="btn btn-lg btn-primary btn-block">
+                                                                    <i class="fa fa-vk"></i>
+                                                                    <span class="">В контакте</span>
+                                                                </button>
+                                                                break;
+                                                            default:
+                                                                <button class="btn btn-lg btn-primary btn-block">
+                                                                    @account.LoginProvider
+                                                                </button>
+                                                                break;
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (ViewBag.ShowRemoveButton)
+                                                        {
+                                                            using (Html.BeginForm("RemoveLogin", "Manage"))
+                                                            {
+                                                                @Html.AntiForgeryToken()
+                                                                <div>
+                                                                    @Html.Hidden("loginProvider", account.LoginProvider)
+                                                                    @Html.Hidden("providerKey", account.ProviderKey)
+                                                                    <input type="submit" class="btn btn-default" value="Удалить" title="Удалить это имя входа @account.LoginProvider из вашей учетной записи" />
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            @: &nbsp;
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                                if (Model.OtherLogins.Count > 0)
+                                {
+                                    <h4>Войти с помощью внешней учетной записи</h4>
+                                    using (Html.BeginForm("LinkLogin", "Manage"))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <div id="socialLoginList">
+                                            <p>
+                                                @foreach (AuthenticationDescription p in Model.OtherLogins)
+                                                {
+                                                    switch (p.AuthenticationType)
+                                                    {
+                                                        case "Google":
+                                                            <button type="submit" class="btn btn-success btn-block" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Войти с помощью учетной записи @p.Caption">
+                                                                <i class="fa fa-google-plus"></i>
+                                                                <span class="">@p.AuthenticationType</span>
+                                                            </button>
+                                                            break;
+                                                        case "Vkontakte":
+                                                            <button type="submit" class="btn btn-success btn-block" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Войти с помощью учетной записи @p.Caption">
+                                                                <i class="fa fa-vk"></i>
+                                                                <span class="">В контакте</span>
+                                                            </button>
+                                                            break;
+                                                        default:
+                                                            <button type="submit" class="btn btn-success btn-block" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Войти с помощью учетной записи @p.Caption">@p.AuthenticationType</button>
+                                                            break;
+                                                    }
+                                                }
+                                            </p>
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="modal-group">
+                        <button id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal" onclick="location.href='@ViewBag.ReturnUrl'">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

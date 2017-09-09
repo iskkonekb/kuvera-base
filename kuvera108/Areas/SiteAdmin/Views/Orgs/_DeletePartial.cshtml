@@ -1,0 +1,44 @@
+﻿@model kuvera108.Areas.SiteAdmin.Models.Org
+@{
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Удалить общество</h4>
+            <h3>Вы уверены, что хотите удалить общество ?</h3>
+
+        </div>
+
+        <div class="modal-body">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+            </dl>
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Descr)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Descr)
+                </dd>
+            </dl>
+            @using (Ajax.BeginForm("Delete", "Orgs", null, new AjaxOptions { HttpMethod = "Post", OnSuccess = "DeleteOrgSuccess" }, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-actions no-color">
+                    @Html.HiddenFor(x => x.Id)
+                    <input type="submit" value="Удалить ?" class="btn btn-success" />
+                    <button id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

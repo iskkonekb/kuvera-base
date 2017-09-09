@@ -1,0 +1,52 @@
+﻿@model kuvera108.Areas.SiteAdmin.Models.ExternalLoginListViewModel
+@using Microsoft.Owin.Security
+
+<h5>Войдите с помощью</h5>
+@{
+    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+    if (loginProviders.Count() == 0)
+    {
+        <div>
+            <p>
+                There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+                for details on setting up this ASP.NET application to support logging in via external services.
+            </p>
+        </div>
+    }
+    else
+    {
+        using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = Model.ReturnUrl }))
+        {
+            @Html.AntiForgeryToken()
+            <ul class="list-unstyled list-social">
+                @foreach (AuthenticationDescription p in loginProviders)
+                {
+                    <li>
+                        @switch (@p.AuthenticationType)
+                        {
+                            case "Google":
+                                <button type="submit" class="btn btn-lg btn-primary btn-block" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Войти с помощью учетной записи @p.Caption">
+                                    <i class="fa fa-google-plus"></i>
+                                    <span class="">@p.AuthenticationType</span>
+                                </button>
+                                <br />
+                                break;
+                            case "Vkontakte":
+                                <button type="submit" class="btn btn-lg btn-primary btn-block" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Войти с помощью учетной записи @p.Caption">
+                                    <i class="fa fa-vk"></i>
+                                    <span class="">В контакте</span>
+                                </button>
+                                break;
+                            default:
+                                <button type="submit" class="btn btn-lg btn-default btn-block" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Войти с помощью учетной записи @p.Caption">
+                                    <i class="fa fa-google-plus"></i>
+                                    <span class="">@p.AuthenticationType</span>
+                                </button>
+                                break;
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    }
+}

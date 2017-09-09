@@ -1,0 +1,167 @@
+﻿@{ Layout = "~/Areas/SiteAdmin/Views/Shared/_LayoutManage.cshtml";}
+@model kuvera108.Areas.SiteAdmin.Models.OrgUsersSearchAndCreateModel
+@{
+    ViewBag.Title = "Пользователи в обществе";
+}
+@Styles.Render("~/bundles/datatables/css")
+@using kuvera108.Data
+
+<div class="col-md-12">
+    <p class="well lead">
+        @Html.ActionLink("Управление учетной записью", "Index", new { area = "SiteAdmin", controller = "Manage" }, null) > Пользователи в обществе
+    </p>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary list-panel" id="list-panel">
+            <div class="panel-heading list-panel-heading">
+                <button type="button" class="btn btn-default btn-md" data-toggle="modal" data-target="#SearchOrgUsersModal" id="advancedsearch-button">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Поиск
+                </button>
+                <button type="button" class="btn btn-default btn-md" data-toggle="modal" data-url="@Url.Action("Create","OrgUsers")" id="btnCreateOrgUsers">
+                    <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Добавить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createOrgUsersModal" tabindex="-1" role="dialog" aria-labelledby="CreateOrgUsersModal" aria-hidden="true" data-backdrop="static">
+    <div id="createOrgUsersContainer">
+    </div>
+</div>
+<div class="modal fade" id="detailsOrgUsersModal" tabindex="-1" role="dialog" aria-labelledby="DetailsOrgUsersModal" aria-hidden="true" data-backdrop="static">
+    <div id="detailsOrgUsersContainer">
+    </div>
+</div>
+<div class="modal fade" id="deleteOrgUsersModal" tabindex="-1" role="dialog" aria-labelledby="DeleteOrgUsersModal" aria-hidden="true" data-backdrop="static">
+    <div id="deleteOrgUsersContainer">
+    </div>
+</div>
+@Html.Action("AdvancedSearch")
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/datatables")
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/datetime-moment.js"></script>
+
+    <script type="text/javascript">
+        var OrgUsersListVM;
+        $(function () {
+            OrgUsersListVM = {
+                dt: null,
+                init: function () {
+                    $.fn.dataTable.moment('ru-RU');
+                    dt = $('#OrgUsersTable').DataTable({
+                        "serverSide": true,
+                        "processing": true,
+                        select: true,
+                        "language": { "url": '@Url.Content("~/Content/dataTables.russian.lang.json", true)' },
+                        "ajax": {
+                            "url":
+                            "@Url.Action("Get","OrgUsers", new { area = "SiteAdmin" })",
+                            "data": function (data) {
+                                data.Org_Id = $("#Org_Id").val();
+                            }
+                        },
+                        "columns": [
+                            {
+                                "title": "Имя пользователя",
+                                "data": "User_FullName",
+                                "searchable": true
+                            },
+                            {
+                                "title": "Эл. почта",
+                                "data": "User_Email",
+                                "searchable": false
+                            },
+                            {
+                                "title": "Действия",
+                                "data": "Id",
+                                "searchable": false,
+                                "sortable": false,
+                                "render": function (data, type, full, meta) {
+                                    return '<a href="@Url.Action("Details", "OrgUsers")?id=' + data + '" class="detailsOrgUsers">Информация</a> | <a href="@Url.Action("Delete","OrgUsers")?id=' + data + '" class="deleteOrgUsers">Удалить</a>';
+                                }
+                            }
+                        ],
+                        "lengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+                        "order": [[0, "desc"]]
+                    });
+                },
+                refresh: function () {
+                    dt.ajax.reload();
+                }
+            }
+            // Advanced Search Modal Search button click handler 
+            $('#btnPerformOrgUsersSearch').on("click", OrgUsersListVM.refresh);
+            // initialize the datatables
+            OrgUsersListVM.init();
+            $("#btnCreateOrgUsers").on("click", function () {
+                var url = $(this).data("url");
+                $.get(url, function (data) {
+                    $('#createOrgUsersContainer').html(data);
+                    $('#createOrgUsersModal').modal("show");
+                    $("#createOrgUsersModal").draggable({
+                        handle: ".modal-header"
+                    });
+                });
+            });
+            $('#OrgUsersTable').on("click", ".detailsOrgUsers", function (event) {
+                event.preventDefault();
+                var url = $(this).attr("href");
+                $.get(url, function (data) {
+                    $('#detailsOrgUsersContainer').html(data);
+                    $('#detailsOrgUsersModal').modal('show');
+                    $("#detailsOrgUsersModal").draggable({
+                        handle: ".modal-header"
+                    });
+                });
+            });
+            $('#OrgUsersTable').on("click", ".deleteOrgUsers", function (event) {
+                event.preventDefault();
+                var url = $(this).attr("href");
+                $.get(url, function (data) {
+                    $('#deleteOrgUsersContainer').html(data);
+                    $('#deleteOrgUsersModal').modal('show');
+                    $("#deleteOrgUsersModal").draggable({
+                        handle: ".modal-header"
+                    });
+                });
+            });
+        });
+    /**** Create OrgUsers Ajax Form CallBack ********/
+        function CreateOrgUserSuccess(data) {
+        if (data != "success") {
+            $('#createOrgUsersContainer').html(data);
+            return;
+        }
+        $('#createOrgUsersModal').modal('hide');
+        $('#createOrgUsersContainer').html("");
+        OrgUsersListVM.refresh();
+    }
+    /**** Delete OrgUsers Ajax Form CallBack ********/
+    function DeleteOrgUsersuccess(data) {
+        if (data != "success") {
+            $('#deleteOrgUsersContainer').html(data);
+            return;
+        }
+        $('#deleteOrgUsersModal').modal('hide');
+        $('#deleteOrgUsersContainer').html("");
+        OrgUsersListVM.refresh();
+    }
+</script>
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default list-panel" id="list-panel">
+            <div class="panel-heading list-panel-heading">
+                <h1 class="panel-title list-panel-title">Общества</h1>
+            </div>
+            <div class="panel-body">
+                <table id="OrgUsersTable" class="table table-striped table-bordered"
+                       style="width:100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+ 

@@ -1,0 +1,96 @@
+﻿@{ Layout = "~/Areas/SiteAdmin/Views/Shared/_LayoutManage.cshtml";}
+@model kuvera108.Areas.SiteAdmin.Models.IndexViewModel
+@{
+    ViewBag.Title = "Управление учетной записью";
+}
+
+<div class="col-md-12">
+    <p class="well lead">@ViewBag.Title</p>
+    @ViewBag.StatusMessage
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <h2>Мои реквизиты</h2>
+        <ul>
+            <li>
+            @if (Model.HasPassword)
+            {
+                @Html.ActionLink("Смена пароля", "ChangePassword")
+            }
+            else
+            {
+                @Html.ActionLink("Создать", "SetPassword")
+            }</li>
+            <li>
+                <div class="form-group">
+                    <a href="@Url.Action("ManageLogins", "Manage", new { area = "SiteAdmin"} )">Управление внешними именами для входа(&nbsp;@Model.Logins.Count&nbsp;)</a>
+                </div>
+                   
+            </li>
+            <li>@Html.ActionLink("Изменить Имя пользователя/ Эл. почту", "ChangeEmail")</li>
+            <li>@Html.ActionLink("Изменить мои реквизиты", "ChangeUser")</li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>Настройки</h2>
+        <ul>
+            <li>@Html.ActionLink("Мои общества", "Index", "Orgs")</li>
+            <li>@Html.ActionLink("Добавить пользователя в сообщество", "Index", "OrgUsers")</li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>Not Implemented</h2>
+    </div>
+    <div class="col-md-3">
+        <h2>Not Implemented</h2>
+    </div>
+</div>
+
+        @*
+        <dt>Номер телефона:</dt>
+        <dd>
+            @(Model.PhoneNumber ?? "None")
+            @if (Model.PhoneNumber != null)
+            {
+                <br />
+                <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
+                using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
+                }
+            }
+            else
+            {
+                <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")
+            }
+        </dd>
+
+    <dt>Двухфакторная проверка подлинности:</dt>
+    <dd>
+        <p>
+            There are no two-factor authentication providers configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+            for details on setting up this ASP.NET application to support two-factor authentication.
+        </p>
+        if (Model.TwoFactor)
+            {
+                using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <text>Включено
+                    <input type="submit" value="Отключить" class="btn btn-link" />
+                    </text>
+                }
+            }
+            else
+            {
+                using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <text>Отключено
+                    <input type="submit" value="Включить" class="btn btn-link" />
+                    </text>
+                }
+            }
+    </dd>*@
+ 

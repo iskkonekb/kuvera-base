@@ -1,0 +1,35 @@
+﻿@model kuvera108.Areas.SiteAdmin.Models.OrgUsersViewModel
+@{
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Пользователь в ообществе</h4>
+        </div>
+        <div class="modal-body">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(x => x.OrgName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(x => x.OrgName)&nbsp;@Html.DisplayFor(x => x.OrgDescr)
+                </dd>
+                <dd>
+                    @Html.DisplayFor(x => x.User_Name)
+                </dd>
+                <dd>
+                    @Html.DisplayFor(x => x.User_FullName)
+                </dd>
+                <dd>
+                    @Html.DisplayFor(x => x.User_Email)
+                </dd>
+            </dl>
+            <div class="form-actions no-color">
+                <button id="btnCancel" type="button" class="btn btn-success" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>

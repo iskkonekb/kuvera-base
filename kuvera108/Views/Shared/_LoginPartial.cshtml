@@ -1,0 +1,56 @@
+﻿@using Microsoft.AspNet.Identity
+@using kuvera108.Areas.SiteAdmin.Models
+@using System.Collections.Generic;
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("FillOrgs", @ViewContext.RouteData.Values["controller"].ToString(), FormMethod.Post, new { role = "form" }))
+    {
+        <ul class="nav navbar-nav" style="padding-top:8px">
+            <li>
+                <select id="OrgSelect" class="selectpicker" data-live-search="true">
+                    @{foreach (var x in ViewBag.MyOrgList)
+                        {
+                            <option value="@x.Org_Id">@x.OrgName</option>
+                        }
+                    }
+                </select>
+            </li>
+        </ul>
+    }
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Здравствуйте,&nbsp;@User.Identity.Name <span class="caret"></span></a>
+                <ul style="margin-top:6px" class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                    <li><a href="@Url.Action("Index", "Manage", new { area = "SiteAdmin"} )">Управление учетной записью</a></li>
+                    <li class="divider"></li>
+                    <li><a href="@Url.Action("ChangePassword", "Manage", new { area = "SiteAdmin"} )">Смена пароля</a></li>
+                    <li><a href="@Url.Action("ChangeUser", "Manage", new { area = "SiteAdmin"} )">Изменение моих параметров</a></li>
+                    <li><a href="@Url.Action("ChangeEmail", "Manage", new { area = "SiteAdmin"} )">Изменение эл. почты</a></li>
+                    <li class="divider"></li>
+                    <li><a href="@Url.Action("Index", "Orgs", new { area = "SiteAdmin"} )">Мои сообщества</a></li>
+                    <li><a href="@Url.Action("Index", "OrgUsers", new { area = "SiteAdmin"} )">Добавить в сообщество</a></li>
+                    <li class="divider"></li>
+                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a></li>
+                </ul>
+            </li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("Регистрация", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        <li>@Html.ActionLink("Выполнить вход", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery('#OrgSelect').change(function () {
+            this.form.submit();
+        });
+    });
+</script>

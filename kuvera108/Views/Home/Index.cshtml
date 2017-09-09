@@ -1,0 +1,8 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<input type="button" value="Press me" onclick="location.href='@Url.Action("Create", "Home")'" />
+<form action="" method="post">
+    <input type="submit" value="Publish1" name="action:Publish1" />
+    <input type="submit" value="Publish0" name="action:Publish0" />
+</form>

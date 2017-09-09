@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Управление сайтом";
+}
+<div class="col-md-12">
+    <p class="well lead">Управление сайтом</p>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <h2>Настройки</h2>
+        <ul>
+            <li>@Html.ActionLink("Мои сообщества", "Org", "SiteAdmin")</li>
+            <li>@Html.ActionLink("Настройки", "grTunes", "SiteAdmin")</li>
+            <li>@Html.ActionLink("События", "Index", "Events")</li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>Управление доступом</h2>
+        <ul>
+            <li>@Html.ActionLink("Роли", "roles", "SiteAdmin")</li>
+            <li>@Html.ActionLink("Пользователи", "users", "SiteAdmin")</li>
+            <li>@Html.ActionLink("Добавить пользователя в сообщество", "roles", "SiteAdmin")</li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <h2>Not Implemented</h2>
+    </div>
+    <div class="col-md-3">
+        <h2>Not Implemented</h2>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+﻿@model kuvera108.Areas.SiteAdmin.Models.Org
+@{
+    Layout = null;
+}
+
+<div class="modal fade" id="SearchOrgModal" tabindex="-1" role="dialog" aria-labelledby="SearchOrgModal" aria-hidden="true" data-backdrop="static">
+    <div id="SearchOrgContainer">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Поиск</h4>
+                </div>
+                @using (Html.BeginForm("Get", "Orgs", FormMethod.Post, new { id = "frmOrgsSearch", @class = "form-horizontal", role = "form" }))
+            {
+                    <div class="modal-body">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                @Html.LabelFor(x => x.Name, htmlAttributes: new { @class = "control-label col-md-3" })
+                                <div class='input-group'>
+                                    @Html.TextBoxFor(x => x.Name, new { @class = "form-control", id = "Org_Search_Name" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnPerformOrgsSearch" type="button" class="btn btn-default btn-success" data-dismiss="modal">Поиск</button>
+                        <button id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script type="text/javascript">
+    $("#SearchOrgModal").draggable({
+  handle: ".modal-header"
+});
+</script>

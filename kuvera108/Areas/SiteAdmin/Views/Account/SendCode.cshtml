@@ -1,0 +1,23 @@
+﻿@{ Layout = "~/Areas/SiteAdmin/Views/Shared/_Empty_modal.cshtml";}
+@model kuvera108.Areas.SiteAdmin.Models.SendCodeViewModel
+@{
+    ViewBag.Title = "Отправить";
+}
+@using (Html.BeginForm("SendCode", "Account", new { ReturnUrl = Model.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("rememberMe", @Model.RememberMe)
+    <h4>Отправить проверочный код</h4>
+    <div class="row">
+        <div class="col-md-12">
+            Выбор поставщика двухфакторной проверки подлинности:
+            @Html.DropDownListFor(model => model.SelectedProvider, Model.Providers)
+            <input type="submit" value="Отправить" class="btn btn-success" />
+            <button id="btnCancel" type="button" class="btn btn-default" data-dismiss="modal" onclick="location.href='@ViewBag.ReturnUrl'">Отмена</button>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
